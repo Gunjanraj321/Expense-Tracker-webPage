@@ -67,7 +67,7 @@ function fetchExpenseList(){
 }
 
 function deleteExpanse(expanseId){
-    fetch(`${apiUrl}/expanse/${expanseId}`,{
+    fetch(`${apiUrl}/expenses/${expanseId}`,{
         method:"DELETE",
         headers:{
             "Content-Type":"application/json"
