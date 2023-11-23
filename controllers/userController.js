@@ -25,4 +25,20 @@ const processSignup = async (req, res) => {
   }
 };
 
-module.exports = { processSignup };
+const processlogin =async (req,res) =>{
+  const { email , password } = req.body;
+
+  try{
+    // Ensure that the database connection is established before querying
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+    const user = await User.findOne({ where : { email }});
+    if(!user) {
+      return res.status(400).json({Error:"User not found"})
+    }
+  }catch(err){
+    console.log(err);
+  }
+}
+
+module.exports = { processSignup , processlogin };
