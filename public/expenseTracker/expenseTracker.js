@@ -57,12 +57,30 @@ function fetchExpenseList(){
             <span>Name: ${expanse.name} </span>
             <span>Quantity: ${expanse.quantity} </span>
             <span>Amount: ${expanse.amount} </span>
+            <button onclick="deleteExpanse(${expanse.id})" >Delete</button>
             `;
            expanseList.appendChild(expenseItem); 
         });
     }).catch(err =>{
         console.log("Error Occured while fetching data",err);
     })
+}
+
+function deleteExpanse(expanseId){
+    fetch(`${apiUrl}/expanse/${expanseId}`,{
+        method:"DELETE",
+        headers:{
+            "Content-Type":"application/json"
+        }
+    }).then((res)=>{
+        if(res.ok){
+            fetchExpenseList();
+        }else{
+            console.log('error occured while deleting expanse',res.statusText);
+        }
+    }).catch(err=>{
+        console.error("error occured while delting expanse",err)
+    });
 }
 
 fetchExpenseList();
