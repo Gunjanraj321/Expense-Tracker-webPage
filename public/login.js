@@ -1,16 +1,21 @@
 const apiUrl = 'http://localhost:3000';
 
 const loginForm = document.getElementById('loginForm');
+const errorDiv = document.getElementById('error');
 
 loginForm.addEventListener('submit',async (e)=>{
     e.preventDefault();
+
     const formData = new FormData(loginForm);
+    console.log("formData:", formData);
     const userData = {
-        email : formData.email,
-        password : formData.password,
+        email : formData.get('email'),
+        password : formData.get('password'),
     }
+
     if(!userData.email || !userData.password){
-        // alert({message:"all data mandatory"})
+        errorDiv.textContent = "Please fill in all required details";
+        console.log('data not filled');
         return;
     }
     try{
@@ -23,9 +28,10 @@ loginForm.addEventListener('submit',async (e)=>{
         })
         if(response.ok){
             loginForm.reset();
-            response.status(201).json("user logged in");
-            console.log('user logged in')
-            // alert('logged in succesfully');
+            alert('user logged in')
+        }else{
+            const data = await response.json();
+            errorDiv.textContent = data.error;
         }
     }catch(error){
         console.log(error);

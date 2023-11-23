@@ -1,8 +1,9 @@
 const apiUrl = 'http://localhost:3000';
 
 const signupForm = document.getElementById('signupForm');
+const errorDiv = document.getElementById('error');
 
-signupForm.addEventListener('submit',async (event) =>{
+signupForm.addEventListener('submit',async (e) =>{
     e.preventDefault();
 
         const formData = new FormData(signupForm);
@@ -13,6 +14,7 @@ signupForm.addEventListener('submit',async (event) =>{
         }
 
         if(!userData.name || !userData.email || !userData.password){
+            errorDiv.textContent = "Please fill in all required details";
             console.log("All fields required");
             return;
         }
@@ -27,6 +29,9 @@ signupForm.addEventListener('submit',async (event) =>{
             });
             if(response.ok){
                 signupForm.reset();
+            }else{
+                const data = await response.json();
+                errorDiv.textContent = data.error;
             }
 
         }catch(error){
