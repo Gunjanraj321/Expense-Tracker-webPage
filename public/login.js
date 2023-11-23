@@ -28,7 +28,8 @@ loginForm.addEventListener('submit',async (e)=>{
         })
         if(response.ok){
             loginForm.reset();
-            alert('user logged in')
+           // window.location.href = `${apiUrl}`
+
         }else{
             const data = await response.json();
             errorDiv.textContent = data.error;
