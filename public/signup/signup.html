@@ -6,16 +6,17 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="./expenseTracker/expanseTracker.html" id="loginForm" >
-        <label for="email">Name:</label>
+    <form id="signupForm" >
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required placeholder="Enter Your Name">
+        <label for="email">Email:</label>
         <input type="email" id="email" name="email" required placeholder="Enter Your Email">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required placeholder="Enter Your Password">
         <div id="error"></div>
-        <button type="submit">Login</button>
+        <button type="submit" value="Signup">Signup</button>
     </form>
-    <a href="./signup.html" >New User - Signup</a>
-    <a href="" >Forgot Password</a>
-    <script src="./login.js"></script>
+    <a href="../login/login.html" >Existing User - Login</a>
+    <script src="../signup/signup.js"></script>
 </body>
 </html>

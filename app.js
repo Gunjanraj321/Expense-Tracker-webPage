@@ -1,22 +1,26 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
-const User = require('./models/userModel');
 const sequelize = require('./util/db');
-const router = require('./routes/signupLoginPage');
+const expanseRouter = require('./routes/expanseRoute');
+const redirectingRoute = require('./routes/redirectingRoute');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const port = process.env.PORT ||3000 ;
 app.use(express.static(path.join(__dirname,"public")));
 
+app.use('/api/',redirectingRoute);
+app.use('/api/expenses',expanseRouter);
 
-app.get('/signup', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
 });
-app.use('/',router)
 
 sequelize
     .sync()

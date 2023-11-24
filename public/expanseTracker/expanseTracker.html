@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker Website</title>
+  </head>
+  <body>
+    <form id="expenseForm" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" required />
+      <label for="amount">Amount Spend:</label>
+      <input type="number" id="amount" name="amount" required />
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <div id="expenseList"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+  </body>
+</html>
