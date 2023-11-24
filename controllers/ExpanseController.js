@@ -4,7 +4,7 @@ const sequelize = require("../util/db");
 const createExpanse = async (req, res) => {
   try {
     const { name, amount, quantity } = req.body;
-    console.log(req.body);
+    console.log('Received data: ',req.body);
     // Validation
     if (!name || !amount || !quantity) {
       return res.status(400).json({ Error: 'Missing required fields' });

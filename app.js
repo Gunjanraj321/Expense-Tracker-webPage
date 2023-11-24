@@ -14,8 +14,8 @@ app.use(express.json());
 const port = process.env.PORT ||3000 ;
 app.use(express.static(path.join(__dirname,"public")));
 
-app.use('/api/',redirectingRoute);
-app.use('/api/expenses',expanseRouter);
+app.use('/api',redirectingRoute);
+app.use('/expenses',expanseRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
