@@ -4,6 +4,13 @@ const form = document.getElementById("expenseForm");
 const submitButton = document.getElementById("submitButton");
 const expanseList = document.getElementById("expenseList");
 
+const token = localStorage.getItem("token");
+
+const headers = {
+  "Content-Type": "application/json",
+  "Authorization" :`Bearer ${token}`,
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   
@@ -14,14 +21,11 @@ form.addEventListener("submit", async (e) => {
     quantity: formData.get("quantity"),
     amount: formData.get("amount"),
   };
-console.log("123",expense)
-console.log("----",JSON.stringify(expense));
+
   try {
     const response = await fetch(`${apiUrl}/expenses`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: JSON.stringify(expense),
     });
     
@@ -37,11 +41,9 @@ console.log("----",JSON.stringify(expense));
 
 async function fetchExpenseList() {
   try {
-    const response = await fetch(`${apiUrl}/expenses`, {
+    const response = await fetch(`${apiUrl}/expenses`,{
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -74,9 +76,7 @@ async function fetchExpenseList() {
 function deleteExpanse(expanseId) {
   fetch(`${apiUrl}/expenses/${expanseId}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
   })
     .then((res) => {
       if (res.ok) {

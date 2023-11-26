@@ -13,6 +13,10 @@ const expanse = sequelize.define("expanse",{
     amount:{
         type:Sequelize.INTEGER,
         allowNull:false,
+    },
+    userId:{
+        type: Sequelize.INTEGER,
+        allowNull:false,
     }
 })
 

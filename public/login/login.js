@@ -27,6 +27,12 @@ loginForm.addEventListener("submit", async (e) => {
       body: JSON.stringify(userData),
     });
     if (response.ok) {
+
+      const data = await response.json();
+      const token = data.token;
+
+      localStorage.setItem("token",token);
+
       loginForm.reset();
       window.location.href = `${apiUrl}/api/expenses`
     } else {

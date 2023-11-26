@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 
-const { processSignup , processlogin } = require('../controllers/userController')
-
 
 router.get("/welcome" , (req , res )=>{
     const filePath = path.join(__dirname,"..","public","welcome","welcome.html");
@@ -24,8 +22,5 @@ router.get("/expenses" , (req, res) => {
     res.sendFile(filePath);
 })
 
-router.post('/signup',processSignup);
-
-router.post('/login',processlogin);
 
 module.exports = router;

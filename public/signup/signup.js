@@ -28,6 +28,12 @@ signupForm.addEventListener("submit", async (e) => {
     });
     if (response.ok) {
       signupForm.reset();
+      
+      const data = await response.json();
+      const token = data.token;
+
+      localStorage.setItem("token",token)
+
       window.location.href = `${apiUrl}/api/login`;
     } else {
       const data = await response.json();
