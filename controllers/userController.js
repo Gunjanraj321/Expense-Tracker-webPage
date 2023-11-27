@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 const processSignup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password , isPremium } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: "all fieds are mandatory" });
@@ -25,11 +25,12 @@ const processSignup = async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
+      isPremiumuser: isPremium,
     });
 
     const token = jwt.sign({userId : newUser.id}, process.env.jwtSecret);
 
-    res.status(201).json({message: " registration Successful",token: token});
+    res.status(201).json({message: " registration Successful",token: token,isPremium});
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "internal server error" });
@@ -49,12 +50,13 @@ const processlogin = async (req, res) => {
     const passwordMatched = await bcrypt.compare(password, user.password);
 
     const token = jwt.sign({userId:user.id},process.env.jwtSecret);
+    const isPremium = user.isPremiumuser;
     console.log("Password Matched : ", passwordMatched);
 
     if (!passwordMatched) {
       return res.status(401).json({ Error: "User not authorized" });
     }
-    res.status(201).json({ message: " user logged in succesfully" ,token });
+    res.status(201).json({ message: " user logged in succesfully" ,token ,isPremium});
   } catch (err) {
     console.log("Error during Login", err);
     res.status(500).json({ error: "Error occured while login" });

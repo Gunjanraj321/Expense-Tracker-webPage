@@ -4,9 +4,13 @@ const sequelize = require("../util/db");
 
 
 const createExpanse = async (req, res) => {
+  // let t;
   try {
     const { name, amount, quantity } = req.body;
+    const user = req.user;
     const userId = req.user.userId;
+
+    // t= await sequelize.transaction();
 
     console.log('Received data: ',req.body);
     // Validation
@@ -19,7 +23,9 @@ const createExpanse = async (req, res) => {
       quantity,
       amount,
       userId
-    });
+    },
+   
+    );
     res.status(201).json(newExpanse);
   } catch (error) {
     console.log(error);
@@ -31,7 +37,6 @@ const fetchExpanse = async (req, res) => {
   try {
     const userId = req.user.userId;
     const data = await Expanse.findAll({where:{userId:userId}});
-
     res.json(data);
   } catch (error) {
     console.log("error occured while fethcing data", error);

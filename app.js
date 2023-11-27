@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const express = require('express');
 const cors = require('cors');
@@ -10,16 +10,17 @@ const verify = require('./middleware/verifyTokenHandler');
 const userRoute = require('./routes/userRoute');
 const expanseRouter = require('./routes/expanseRoute');
 const redirectingRoute = require('./routes/redirectingRoute');
-
+const premiumRoute = require('./routes/premiumRoute');
 
 const User = require('./models/userModel');
 const Expanse = require('./models/expanseModel');
+const Order = require('./models/orderModel');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT ||3000 ;
+const port = process.env.PORT ;
 app.use(express.static(path.join(__dirname,"public")));
 
 app.use((err, req, res, next) => {
@@ -35,13 +36,21 @@ User.hasMany(Expanse, {
     foreignKey:"userId",
     onDelete:"CASCADE",
 });
+Order.belongsTo(User,{
+    foreignKey:"userId",
+    onDelete:"CASCADE",
+})
+User.hasMany(Order,{
+    foreignKey:"userId",
+    onDelete: "CASCADE",
+})
 
 app.use('/api',userRoute);
 app.use('/api',redirectingRoute);
 app.use('/expenses',verify.verify,expanseRouter);
-
+app.use('/api/premium',verify.verify,premiumRoute)
 sequelize
-    .sync({force:false})
+    .sync()
     .then(result =>{
         app.listen(port, ()=>{
             console.log('server running on port :',port);

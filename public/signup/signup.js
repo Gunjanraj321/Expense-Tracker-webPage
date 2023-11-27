@@ -31,8 +31,10 @@ signupForm.addEventListener("submit", async (e) => {
       
       const data = await response.json();
       const token = data.token;
+      const isPremium = data.isPremium;
 
       localStorage.setItem("token",token)
+      localStorage.setItem("isPremium",isPremium)
 
       window.location.href = `${apiUrl}/api/login`;
     } else {

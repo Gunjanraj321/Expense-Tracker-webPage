@@ -1,4 +1,4 @@
-const apiUrl = `http://localhost:3000`;
+const apiUrl1 = `http://localhost:3000`;
 
 const form = document.getElementById("expenseForm");
 const submitButton = document.getElementById("submitButton");
@@ -23,7 +23,7 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    const response = await fetch(`${apiUrl}/expenses`, {
+    const response = await fetch(`${apiUrl1}/expenses`, {
       method: "POST",
       headers: headers,
       body: JSON.stringify(expense),
@@ -41,7 +41,7 @@ form.addEventListener("submit", async (e) => {
 
 async function fetchExpenseList() {
   try {
-    const response = await fetch(`${apiUrl}/expenses`,{
+    const response = await fetch(`${apiUrl1}/expenses`,{
       method: "GET",
       headers: headers,
     });
@@ -51,7 +51,7 @@ async function fetchExpenseList() {
     }
 
     const data = await response.json();
-    console.log('Data:', data);
+    // console.log('Data:', data);
 
     expanseList.innerHTML = "";
 
@@ -74,7 +74,7 @@ async function fetchExpenseList() {
 
 
 function deleteExpanse(expanseId) {
-  fetch(`${apiUrl}/expenses/${expanseId}`, {
+  fetch(`${apiUrl1}/expenses/${expanseId}`, {
     method: "DELETE",
     headers: headers,
   })
