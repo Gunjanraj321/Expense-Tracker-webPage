@@ -20,6 +20,10 @@ const User = sequelize.define(
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
+    total_cost:{
+      type :Sequelize.INTEGER,
+      defaultValue:0,
+    }
   }
 )
 

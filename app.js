@@ -50,7 +50,7 @@ app.use('/api',redirectingRoute);
 app.use('/expenses',verify.verify,expanseRouter);
 app.use('/api/premium',verify.verify,premiumRoute)
 sequelize
-    .sync()
+    .sync({force:false})
     .then(result =>{
         app.listen(port, ()=>{
             console.log('server running on port :',port);
