@@ -1,4 +1,4 @@
-const Expanse = require("../models/expanseModel");
+const Expense = require("../models/expanseModel");
 const User = require("../models/userModel");
 const sequelize = require("../util/db");
 
@@ -6,20 +6,18 @@ const createExpanse = async (req, res) => {
   let t;
   try {
     const { name, amount, quantity } = req.body;
-    const user = req.user;
-    console.log(`user------------++ ${user}`);
+    // const user = req.user;
+    
     const userId = req.user.userId;
-    console.log(userId)
 
     t = await sequelize.transaction();
 
-    console.log("Received data: ", req.body);
     // Validation
-    // if (!name || !amount || !quantity) {
-    //   return res.status(400).json({ Error: "Missing required fields" });
-    // }
+    if (!name || !amount || !quantity) {
+      return res.status(400).json({ Error: "Missing required fields" });
+    }
 
-    const newExpanse = await Expanse.create(
+    const newExpanse = await Expense.create(
       {
         name,
         quantity,
@@ -34,7 +32,7 @@ const createExpanse = async (req, res) => {
         total_cost: sequelize.literal(`total_cost + ${amount}`),
       },
       {
-        where: { id: user.userId },
+        where: { id: userId },
         transaction: t,
       }
     );
@@ -56,7 +54,7 @@ const createExpanse = async (req, res) => {
 const fetchExpanse = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const data = await Expanse.findAll({ where: { userId: userId } });
+    const data = await Expense.findAll({ where: { userId } });
     res.json(data);
   } catch (error) {
     console.log("error occured while fethcing data", error);
@@ -67,7 +65,7 @@ const fetchExpanse = async (req, res) => {
 const getExpenseById = async (req, res) => {
   const expenseId = req.params.id;
   try {
-    const row = await Expanse.findOne({ where: { id: expenseId } });
+    const row = await Expense.findOne({ where: { id: expenseId } });
     if (!row) {
       return res.status(404).json({ error: "Expense Not Found" });
     }
@@ -85,8 +83,8 @@ const deleteExpanse = async (req, res) => {
   try {
     t = await sequelize.transaction();
 
-    const idMatched = await Expanse.findOne({
-      where: { id: expenseId },
+    const idMatched = await Expense.findOne({
+      where: {id: expenseId },
       attribute: ["id", "amount"],
       transaction: t,
     });
@@ -107,7 +105,7 @@ const deleteExpanse = async (req, res) => {
         transaction: t,
       }
     );
-    await Expanse.destroy({
+    await Expense.destroy({
       where: { id: expenseId },
       transaction: t,
     });
@@ -129,49 +127,34 @@ const deleteExpanse = async (req, res) => {
 
 const updateExpense = async (req, res) => {
   let t;
-  const expanseId = req.params.id;
+  const expenseId = req.params.id;
   const { name, amount, quantity } = req.body;
-  const user = req.user;
+  // const user = req.user;
 
   try {
     const userId = req.user.userId;
     t = await sequelize.transaction();
 
-    const row = await Expanse.update(
-      {
-        name,
-        quantity,
-        amount,
-      },
-      {
-        where: { id: expanseId, userId: userId },
-        returning: true,
-        transaction: t,
-      }
+    const [rowUpdated] = await Expense.update(
+      { name, quantity, amount },
+      { where: { id: expenseId, userId }, returning: true, transaction: t }
     );
-    const updatedExpanse = await Expanse.findOne({ where: { id: expanseId } });
+    const updatedExpense = await Expense.findOne({ where: { id: expenseId } });
 
-    if (row === 0) {
-      await t.rollback();
-      return res.status(404).json({
-        Error: "Expense not Found",
-      });
+    if (rowUpdated === 0) {
+      throw new Error("Expense not found");
     }
 
+    const updatedExpanse = rowUpdated[1][0];
     const diffAmount = amount - updatedExpanse.amount;
 
-    await user.update(
-      {
-        total_cost: sequelize.literal(`total_cost + ${diffAmount}`),
-      },
-      {
-        where: { id: userId },
-        transaction: t,
-      }
+    await User.update(
+      { total_cost: sequelize.literal(`total_cost + ${diffAmount}`) },
+      { where: { id: userId }, transaction: t }
     );
     await t.commit();
 
-    res.json(updatedExpanse);
+    res.json(updatedExpense);
   } catch (error) {
     if (t) {
       await t.rollback();
