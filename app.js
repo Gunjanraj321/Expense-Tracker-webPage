@@ -49,14 +49,14 @@ User.hasMany(forgotPasswordReq,{
 })
 
 app.use('/api',userRoute);
-app.use('/api/reset',forgotPasswordRoute);
 app.use('/api',redirectingRoute);
+app.use('/api/reset',forgotPasswordRoute);
 app.use('/expenses',verify.verify,expanseRouter);
 app.use('/api/premium',verify.verify,premiumRoute);
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
+// app.use((err, req, res, next) => {
+//     console.error(err.stack);
+//     res.status(500).send('Something went wrong!');
+// });
 
 sequelize
     .sync({force:false})

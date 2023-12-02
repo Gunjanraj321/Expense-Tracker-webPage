@@ -29,7 +29,7 @@ router.get("/forgot",(req, res) =>{
 router.get('/resetPage',(req, res) =>{
     const uuid = req.params.uuid;
     const filePath =path.join(__dirname,"..","public","resetPassword","resetPassword.html");
-    req.sendFile(filePath, { query :{uuid}});
+    res.sendFile(filePath, { query :{uuid}});
 })
 
 module.exports = router;

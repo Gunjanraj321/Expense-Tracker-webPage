@@ -75,7 +75,7 @@ const resetPassword = async (req, res, next) => {
     const forPasswordRequest = await forgotPasswordReq.findOne({
       where: { id: req.params.uuid },
     });
-    if (!forPasswordRequest || forPasswordRequest.isactive) {
+    if (!forPasswordRequest || !forPasswordRequest.isactive) {
       return res.status(401).json({ message: "Invalid reset link" });
     }
 
@@ -112,12 +112,12 @@ const newPassword = async (req, res) => {
 
     await forPasswordRequest.update({ isactive: false }, { transaction: t });
 
-    t.commit();
-    console.lo(updatedUser);
+    await t.commit();
+    console.log(updatedUser);
     res.status(200).json({ message: "paswword updated succesfully" });
   } catch (err) {
     if (t) {
-      t.rollback();
+      await t.rollback();
     }
 
     console.log(err);
