@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const path = require("path");
+const { route } = require("./userRoute");
 
 
 router.get("/welcome" , (req , res )=>{
@@ -21,6 +22,14 @@ router.get("/expenses" , (req, res) => {
     const filePath = path.join(__dirname,"..","public","expanseTracker","expanseTracker.html");
     res.sendFile(filePath);
 })
-
+router.get("/forgot",(req, res) =>{
+    const filePath = path.join(__dirname,"..","public","forgotPassword","forgotPassword.html");
+    res.sendFile(filePath);
+})
+router.get('/reset',(req, res) =>{
+    const uuid = req.params.uuid;
+    const filePath =path.join(__dirname,"..","public","resetPassword","resetPassword.html");
+    req.sendFile(filePath, { query :{uuid}});
+})
 
 module.exports = router;

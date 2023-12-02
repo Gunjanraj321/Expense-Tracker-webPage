@@ -11,16 +11,18 @@ const userRoute = require('./routes/userRoute');
 const expanseRouter = require('./routes/expanseRoute');
 const redirectingRoute = require('./routes/redirectingRoute');
 const premiumRoute = require('./routes/premiumRoute');
+const forgotPasswordRoute = require('./routes/forgotPasswordRoute')
 
 const User = require('./models/userModel');
 const Expanse = require('./models/expanseModel');
 const Order = require('./models/orderModel');
+const forgotPasswordReq = require('./models/forgotPassword');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT ;
+const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname,"public")));
 
 app.use((err, req, res, next) => {
@@ -44,13 +46,22 @@ User.hasMany(Order,{
     foreignKey:"userId",
     onDelete: "CASCADE",
 })
+forgotPasswordReq.belongsTo(User,{
+    foreignKey:"userId"
+})
+User.hasMany(forgotPasswordReq,{
+    foreignKey:"userId"
+})
 
 app.use('/api',userRoute);
+app.use('/api/reset',forgotPasswordRoute);
 app.use('/api',redirectingRoute);
 app.use('/expenses',verify.verify,expanseRouter);
-app.use('/api/premium',verify.verify,premiumRoute)
+app.use('/api/premium',verify.verify,premiumRoute);
+
+
 sequelize
-    .sync({force:false})
+    .sync()
     .then(result =>{
         app.listen(port, ()=>{
             console.log('server running on port :',port);

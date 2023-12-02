@@ -7,7 +7,7 @@ loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(loginForm);
-  console.log("formData:", formData);
+  
   const userData = {
     email: formData.get("email"),
     password: formData.get("password"),
