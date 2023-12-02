@@ -1,7 +1,7 @@
 require("dotenv").config();
-var SibApiV3Sdk = require("sib-api-v3-sdk");
-const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+let SibApiV3Sdk = require("sib-api-v3-sdk");
+const User = require("../models/userModel");
 const sequelize = require("../util/db");
 const forgotPasswordReq = require("../models/forgotPassword");
 
@@ -28,7 +28,8 @@ const forgotPasswordData = async (req, res, next) => {
 
       const apiKeyInstance = defaultClient.authentications["api-key"];
       apiKeyInstance.apiKey = apiKey;
-      const transactionalEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+
+      const transactionalEmailsApi = new SibApiV3Sdk.TransactionalEmailsApi();
       const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
       //configure the email
@@ -37,12 +38,22 @@ const forgotPasswordData = async (req, res, next) => {
         email: "gk211195@gmail.com",
         name: "Gunjan Kumar",
       };
+
       sendSmtpEmail.subject = "Password Recovery";
-      sendSmtpEmail.htmlContent = `<a href="http://localhost:3000/api/reset/resetPassword/${forPasswordReq.id}">Click here to reset Password</a>`;
-
+      sendSmtpEmail.htmlContent = `
+      <p>Hello ${user.username},</p>
+      <p>We received a request to reset your password. Click the link below to reset your password:</p>
+      <p><a href="http://localhost:3000/api/reset/resetPassword/${forPasswordReq.id}">Reset Password</a></p>
+      <p>If you did not request a password reset, please ignore this email.</p>
+      <p>Thank you,</p>
+      <p>Your App Name Team</p>
+    `;
       // send the email
-      await transactionalEmailApi.sendTransacEmail(sendSmtpEmail);
 
+      const response = await transactionalEmailsApi.sendTransacEmail(
+        sendSmtpEmail
+      );
+      console.log(response);
       console.log("Recovery Email sent succesfully");
       res.status(200).json({ message: "Recovery email sent succesfully" });
     } else {
@@ -70,7 +81,7 @@ const resetPassword = async (req, res, next) => {
 
     const userId = forPasswordRequest.userId;
 
-    res.redirect(`http://localhost:3000/api/reset?uuid=${req.params.uuid}`);
+    res.redirect(`http://localhost:3000/api/resetPage?uuid=${req.params.uuid}`);
   } catch (err) {
     console.log("Error in resetPssword route:", err);
     res.status(500).json({ message: "internal Server Erorr" });
@@ -93,7 +104,7 @@ const newPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const userId = forPasswordRequest.userId;
     t = await sequelize.transaction();
-    const updatwUser = await User.update(
+    const updatedUser = await User.update(
       { password: hashedPassword },
       { where: { id: userId } },
       { transaction: t }
@@ -102,12 +113,13 @@ const newPassword = async (req, res) => {
     await forPasswordRequest.update({ isactive: false }, { transaction: t });
 
     t.commit();
-    console.log(updatwUser);
+    console.lo(updatedUser);
     res.status(200).json({ message: "paswword updated succesfully" });
   } catch (err) {
     if (t) {
       t.rollback();
     }
+
     console.log(err);
     res.status(500).json({ message: "Internal Server error" });
   }

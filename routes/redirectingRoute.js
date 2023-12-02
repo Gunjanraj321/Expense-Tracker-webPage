@@ -26,7 +26,7 @@ router.get("/forgot",(req, res) =>{
     const filePath = path.join(__dirname,"..","public","forgotPassword","forgotPassword.html");
     res.sendFile(filePath);
 })
-router.get('/reset',(req, res) =>{
+router.get('/resetPage',(req, res) =>{
     const uuid = req.params.uuid;
     const filePath =path.join(__dirname,"..","public","resetPassword","resetPassword.html");
     req.sendFile(filePath, { query :{uuid}});
