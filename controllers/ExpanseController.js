@@ -1,13 +1,14 @@
 const Expense = require("../models/expanseModel");
 const User = require("../models/userModel");
 const sequelize = require("../util/db");
+const downloadedFiles = require("../models/downloadFiles");
 
 const createExpanse = async (req, res) => {
   let t;
   try {
     const { name, amount, quantity } = req.body;
     // const user = req.user;
-    
+
     const userId = req.user.userId;
 
     t = await sequelize.transaction();
@@ -22,7 +23,7 @@ const createExpanse = async (req, res) => {
         name,
         quantity,
         amount,
-        userId:userId,
+        userId: userId,
       },
       { transaction: t }
     );
@@ -84,7 +85,7 @@ const deleteExpanse = async (req, res) => {
     t = await sequelize.transaction();
 
     const idMatched = await Expense.findOne({
-      where: {id: expenseId },
+      where: { id: expenseId },
       attribute: ["id", "amount"],
       transaction: t,
     });
@@ -166,10 +167,44 @@ const updateExpense = async (req, res) => {
   }
 };
 
+const downloadedExpense = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    let Expense = await Expense.findAll({ where: { userId: userId } });
+    const stringifiedExpenses = JSON.stringify(Expense);
+    const filename = `Expenses${userId}/${new Date()}.txt`;
+    const fileUrl = await S3services.uploadToS3(stringifiedExpenses, filename);
+    console.log(fileUrl);
+
+    const downloadFiles = await downloadedFiles.create({
+      link: fileUrl,
+      userId: userId,
+    });
+    res.status(200).json({ fileUrl, success: true });
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "Something not working onbackend side", err: e });
+  }
+};
+
+const getFileHistory = async (req, res) => {
+  try {
+    let userId = req.user.userId;
+    let files = await downloadedFiles.findAll({ where: { userId: userId } });
+    console.log(files);
+    res.json(files);
+  } catch (err) {
+    res.status(500).json({ message: "can't find the require files", err: err });
+  }
+};
+
 module.exports = {
   createExpanse,
   fetchExpanse,
   deleteExpanse,
   getExpenseById,
   updateExpense,
+  getFileHistory,
+  downloadedExpense,
 };

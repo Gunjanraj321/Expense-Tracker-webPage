@@ -11,6 +11,13 @@ const headers = {
   "Authorization" :`Bearer ${token}`,
 }
 
+const logout = () =>{
+  localStorage.removeItem("token");
+  localStorage.removeItem("isPremium");
+  window.location.href = `${apiUrl1}/api/welcome`;
+}
+document.getElementById('logoutBtn').addEventListener("click" , logout);
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   
