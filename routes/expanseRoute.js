@@ -8,13 +8,15 @@ const {
   getExpenseById,
   downloadedExpense,
   getFileHistory,
+  updateExpense,
 } = require("../controllers/ExpanseController");
 
-router.get("/", fetchExpanse);
+router.get("/paginated", fetchExpanse);
 router.post("/", createExpanse);
 router.delete("/:id", deleteExpanse);
 router.get("./:id", getExpenseById);
 router.get("/download", downloadedExpense);
 router.get("/fileHistory", getFileHistory);
+router.get("/:id",updateExpense);
 
 module.exports = router;

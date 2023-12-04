@@ -55,8 +55,22 @@ const createExpanse = async (req, res) => {
 const fetchExpanse = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const data = await Expense.findAll({ where: { userId } });
-    res.json(data);
+    const page = req.query.page || 1;
+    const pageSize = 5;
+    const {count, rows} = await Expense.findAndCountAll({ 
+      where: { userId:userId },
+      attributes:["id","name","quantity","amount"],
+      limit:pageSize,
+      offset:(page-1)*pageSize,    
+    });
+    const totalPAges = Math.ceil(count/pageSize);
+
+    res.json({
+      totalItems : count,
+      totalPAges: totalPAges,
+      currentPages:page,
+      expenses:rows,
+    });
   } catch (error) {
     console.log("error occured while fethcing data", error);
     res.status(500).json({ error: " no data available or server not working" });
