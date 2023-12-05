@@ -19,7 +19,7 @@ let isUpdating = false;
 const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("isPremium");
-  window.location.href = `${apiUrl1}/api/welcome`;
+  window.location.href = `${apiUrl1}/api/redirecting/welcome`;
 };
 document.getElementById("logoutBtn").addEventListener("click", logout);
 
@@ -37,11 +37,16 @@ form.addEventListener("submit", async (e) => {
   try {
     if (isUpdating) {
       const expanseId = formData.get("expenseId");
+
+      console.log("Updating Expense:", expense);
+
       const response = await fetch(`${apiUrl1}/expenses/${expanseId}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(expense),
       });
+      console.log("Response from Server:", response);
+
       if (response.ok) {
         isUpdating = false;
         form.reset();
@@ -68,7 +73,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-let currentPage=1;
+let currentPage = 1;
 
 async function fetchExpenseList(page = 1) {
   try {
@@ -94,7 +99,7 @@ async function fetchExpenseList(page = 1) {
           <span>Quantity: ${expanse.quantity} </span>
           <span>Amount: ${expanse.amount} </span>
           <button data-expense-id="${expanse.id}" class="update-button">Update</button>
-          <button onclick="deleteExpanse(${expanse.id})" >Delete</button>
+          <button class="delete-button" data-expense-id="${expanse.id}" >Delete</button>
         </div>
       `;
       expanseList.appendChild(expenseItem);
@@ -106,19 +111,19 @@ async function fetchExpenseList(page = 1) {
 }
 
 prevExpensePageButton.addEventListener("click", () => {
-  if(currentPage > 1){
+  if (currentPage > 1) {
     currentPage--;
     fetchExpenseList(currentPage);
   }
 });
 
-nextExpensePageButton.addEventListener("click", () =>{
+nextExpensePageButton.addEventListener("click", () => {
   currentPage++;
   fetchExpenseList(currentPage);
-})
+});
 
 function updatePagination(data) {
-  if (data.totalPages >= 1) {
+  if (data && data.totalPages >= 1) {
     prevExpensePageButton.disabled = currentPage === 1;
     nextExpensePageButton.disabled = currentPage === data.totalPages;
 
@@ -129,13 +134,21 @@ function updatePagination(data) {
 }
 
 expanseList.addEventListener("click", async (e) => {
+  if (e.target && e.target.matches("button.delete-button")) {
+    const expanseId = e.target.getAttribute("data-expense-id");
+    await deleteExpanse(expanseId);
+  }
+});
+
+expanseList.addEventListener("click", async (e) => {
   if (e.target && e.target.matches("button.update-button")) {
     const expenseId = e.target.getAttribute("data-expense-id");
     try {
-      const response = await fetch(`${apiUrl}/api/expenses/${expenseId}`, {
+      const response = await fetch(`${apiUrl1}/expenses/${expenseId}`, {
         method: "GET",
         headers: headers,
       });
+      console.log("Response123:", response);
 
       if (response.ok) {
         const expenseItem = await response.json();
@@ -145,33 +158,37 @@ expanseList.addEventListener("click", async (e) => {
         form.querySelector("#amount").value = expenseItem.amount;
         form.querySelector("#expenseId").value = expenseItem.id;
 
+        console.log(expenseItem);
+
         submitButton.innerText = "Update";
         isUpdating = true;
       } else {
-        console.error("error fetching expense details:", response);
+        if (response.status === 404) {
+          console.error("Expense not found:", response.statusText);
+        }
       }
     } catch (error) {
-      console.error("error fetching expense details:", error);
+      console.error("error fetching expense details:", error.message);
     }
   }
 });
 
-function deleteExpanse(expanseId) {
-  fetch(`${apiUrl1}/expenses/${expanseId}`, {
-    method: "DELETE",
-    headers: headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        fetchExpenseList();
-      } else {
-        console.log("error occured while deleting expanse", res.statusText);
-      }
-    })
-    .catch((err) => {
-      console.error("error occured while delting expanse", err);
+async function deleteExpanse(expanseId) {
+  try {
+    const response =await fetch(`${apiUrl1}/expenses/${expanseId}`, {
+      method: "DELETE",
+      headers: headers,
     });
+    if (response.ok) {
+      fetchExpenseList();
+    } else {
+      console.log("error occured while deleting expanse", res.statusText);
+    }
+  } catch (err) {
+    console.error("error occured while delting expanse", err);
+  }
 }
+
 document.addEventListener("DOMContentLoaded", function () {
   fetchExpenseList(currentPage);
 });

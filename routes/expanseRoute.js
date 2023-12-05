@@ -11,12 +11,12 @@ const {
   updateExpense,
 } = require("../controllers/ExpanseController");
 
-router.get("/paginated", fetchExpanse);
 router.post("/", createExpanse);
-router.delete("/:id", deleteExpanse);
-router.get("./:id", getExpenseById);
-router.get("/download", downloadedExpense);
+router.get("/paginated", fetchExpanse);
+router.get("/reportDownload", downloadedExpense);
 router.get("/fileHistory", getFileHistory);
-router.get("/:id",updateExpense);
+router.get("/:id", getExpenseById);
+router.delete("/:id", deleteExpanse);
+router.put("/:id",updateExpense);
 
 module.exports = router;

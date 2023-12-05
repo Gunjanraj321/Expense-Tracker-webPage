@@ -169,24 +169,36 @@ function showPremiumUI() {
   reportButton(year,yearly);
   report.addEventListener("click", async ()=>{
     try{
-      let reportDownload = await fetch(`${apiUrl}/api/expenses/download`,{
+      let reportDownload = await fetch(`${apiUrl}/expenses/reportDownload`,{
         method:"GET",
         headers:header,
       })
       if(!reportDownload){
-        throw new Error (`HTTP error! Status: ${reportdownload.status}`)
+        throw new Error (`HTTP error! Status: ${reportDownload.status}`)
       }
-      reportDownload = await reportDownload.json();
-      let link = reportDownload.fileUrl;
-      console.log(fileUrl);
-      window.location.href = link;
+
+      reportData = await reportDownload.json();
+      const link = reportData.fileUrl;
+
+      // Create a virtual anchor element to trigger the download
+      const downloadLink = document.createElement("a");
+      downloadLink.href = link;
+      downloadLink.download = "expenses_report.txt";
+    
+      // Append the anchor element to the document and simulate a click
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+    
+      // Remove the anchor element from the document
+      document.body.removeChild(downloadLink);
+
     }catch(e){
       console.log(e);
     }
   })
   downloadHistory.addEventListener("click", async() => {
     try{
-      window.location.href = `${apiUrl}/api/report`;
+      window.location.href = `${apiUrl}/api/redirecting/report`;
     }catch(e){
       console.log(e);
     }

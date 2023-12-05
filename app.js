@@ -1,20 +1,20 @@
 require("dotenv").config();
 
-const fs = require('fs');
-const helmet = require('helmet');
 const express = require('express');
+const fs = require('fs');
 const cors = require('cors');
 const path = require('path');
 const sequelize = require('./util/db');
 const morgan = require("morgan");
-const compression = require('compression');
+const helmet = require('helmet');
+
 const verify = require('./middleware/verifyTokenHandler');
 
 const userRoute = require('./routes/userRoute');
 const expanseRouter = require('./routes/expanseRoute');
 const redirectingRoute = require('./routes/redirectingRoute');
 const premiumRoute = require('./routes/premiumRoute');
-const forgotPasswordRoute = require('./routes/forgotPasswordRoute')
+const forgotPasswordRoute = require('./routes/forgotPasswordRoute');
 
 const User = require('./models/userModel');
 const Expanse = require('./models/expanseModel');
@@ -24,12 +24,11 @@ const forgotPasswordReq = require('./models/forgotPassword');
 const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 
 const app = express();
-app.use(cors());
 
-app.use(helmet());
 app.use(express.json());
-// app.use(compression());
-app.use(morgan("combined",{stream: accessLogStream}));
+app.use(cors());
+app.use(helmet());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname,"public")));
@@ -58,19 +57,22 @@ User.hasMany(forgotPasswordReq,{
     foreignKey:"userId"
 })
 
-app.use('/api',userRoute);
-app.use('/api',redirectingRoute);
+app.use('/api/redirecting',redirectingRoute);
+app.use('/api/sign',userRoute);
 app.use('/api/reset',forgotPasswordRoute);
 app.use('/expenses',verify.verify,expanseRouter);
 app.use('/api/premium',verify.verify,premiumRoute);
 
-sequelize
-    .sync()
-    .then(()=>{
-        console.log("Database Synced")
-    })
-    .then(result =>{
-        app.listen(port, ()=>{
-            console.log('server running on port :',port);
-        })
-    }).catch(err=>console.log(err))
+
+    async function initiate() {
+        try {
+            await sequelize.sync().then(console.log("DB Connected"))
+            app.listen(port, () => {
+                console.log(`Server is running on ${port}`);
+                app.use("/api", redirectingRoute);
+            });
+        } catch (err) {
+            console.error("Error initializing server:", err);
+        }
+    }
+initiate();

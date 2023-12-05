@@ -21,7 +21,7 @@
 
       <label for="amount">Amount Spend:</label>
       <input type="number" id="amount" name="amount" required />
-
+      <input type="hidden" id="expenseId" name="expenseId" />
       <button type="submit" id="submitButton">Add Expense</button>
     </form>
     <div id="expenseList"></div>
@@ -32,12 +32,11 @@
     </div>
     <div class="list-group" id="leaderboard-data"></div>
     <div id="leaderboard-pagination-container"></div>
-    
 
     <p id="premiumStatus"></p>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="../expanseTracker/premiumExpense.js"></script>
-    <script src="../expanseTracker/expenseTracker.js"></script>
+    <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+    <script src="/expanseTracker/premiumExpense.js"></script>
+    <script src="/expanseTracker/expenseTracker.js"></script>
     
   </body>
 </html>

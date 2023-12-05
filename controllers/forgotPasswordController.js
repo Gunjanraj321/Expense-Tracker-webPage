@@ -75,20 +75,21 @@ const resetPassword = async (req, res, next) => {
     const forPasswordRequest = await forgotPasswordReq.findOne({
       where: { id: req.params.uuid },
     });
+
     if (!forPasswordRequest || !forPasswordRequest.isactive) {
       return res.status(401).json({ message: "Invalid reset link" });
     }
 
     const userId = forPasswordRequest.userId;
 
-    res.redirect(`http://localhost:3000/api/resetPage?uuid=${req.params.uuid}`);
+    res.redirect(`http://localhost:3000/api/redirecting/resetPage?uuid=${req.params.uuid}`);
   } catch (err) {
     console.log("Error in resetPssword route:", err);
     res.status(500).json({ message: "internal Server Erorr" });
   }
 };
 
-const newPassword = async (req, res) => {
+const newPassword = async (req, res , next) => {
   let t;
   try {
     const password = req.body.password;
