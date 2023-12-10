@@ -103,7 +103,7 @@ function reportButton(duration,btn) {
         }
       );
       result = await result.json();
-      console.log(result);
+      
       let res=result;
       let leaderboardData = document.getElementById("leaderboard-data");
 

@@ -38,14 +38,11 @@ form.addEventListener("submit", async (e) => {
     if (isUpdating) {
       const expanseId = formData.get("expenseId");
 
-      console.log("Updating Expense:", expense);
-
       const response = await fetch(`${apiUrl1}/expenses/${expanseId}`, {
         method: "PUT",
         headers: headers,
         body: JSON.stringify(expense),
       });
-      console.log("Response from Server:", response);
 
       if (response.ok) {
         isUpdating = false;
@@ -148,7 +145,6 @@ expanseList.addEventListener("click", async (e) => {
         method: "GET",
         headers: headers,
       });
-      console.log("Response123:", response);
 
       if (response.ok) {
         const expenseItem = await response.json();
