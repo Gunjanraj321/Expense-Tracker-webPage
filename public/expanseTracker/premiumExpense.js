@@ -1,4 +1,4 @@
-const apiUrl = `http://localhost:3000`;
+const apiUrl = `http://13.127.249.108:3000`;
 const isPremium = localStorage.getItem("isPremium");
 const premiumBtn = document.getElementById("premiumBtn");
 const navbar = document.getElementById("navbar");
@@ -173,24 +173,14 @@ function showPremiumUI() {
         method:"GET",
         headers:header,
       })
-      if(!reportDownload){
+      if(!reportDownload.ok){
         throw new Error (`HTTP error! Status: ${reportDownload.status}`)
       }
 
       reportData = await reportDownload.json();
       const link = reportData.fileUrl;
 
-      // Create a virtual anchor element to trigger the download
-      const downloadLink = document.createElement("a");
-      downloadLink.href = link;
-      downloadLink.download = "expenses_report.txt";
-    
-      // Append the anchor element to the document and simulate a click
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-    
-      // Remove the anchor element from the document
-      document.body.removeChild(downloadLink);
+      window.location.href = link;
 
     }catch(e){
       console.log(e);

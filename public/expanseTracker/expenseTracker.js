@@ -1,4 +1,4 @@
-const apiUrl1 = `http://localhost:3000`;
+const apiUrl1 = `http://13.127.249.108:3000`;
 
 const form = document.getElementById("expenseForm");
 const submitButton = document.getElementById("submitButton");
@@ -91,7 +91,7 @@ async function fetchExpenseList(page = 1) {
     expenses.forEach((expanse) => {
       const expenseItem = document.createElement("div");
       expenseItem.innerHTML = `
-        <div>
+        <div class="expense-item">
           <span>Name: ${expanse.name} </span>
           <span>Quantity: ${expanse.quantity} </span>
           <span>Amount: ${expanse.amount} </span>

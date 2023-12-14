@@ -6,7 +6,7 @@ const header2 = {
     Authorization:token2,
 }
 
-fetch("http://localhost:3000/expenses/fileHistory",{
+fetch("http://13.127.249.108:3000/expenses/fileHistory",{
     method:"GET",
     headers:header2,
 })

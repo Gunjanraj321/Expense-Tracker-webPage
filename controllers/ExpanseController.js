@@ -2,7 +2,9 @@ const Expense = require("../models/expanseModel");
 const User = require("../models/userModel");
 const sequelize = require("../util/db");
 const downloadedFiles = require("../models/downloadFiles");
-const { promises: fsPromises } = require("fs");
+const S3Services = require("../service/S3services");
+const UserServices = require("../service/userservices");
+
 
 const path = require("path");
 
@@ -187,51 +189,19 @@ const updateExpense = async (req, res) => {
 const downloadedExpense = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const expenses = await Expense.findAll({ where: { userId: userId } });
-
-    // Convert expenses to JSON string
-    const stringifiedExpenses = JSON.stringify(expenses);
-
-    const downloadsDir = path.join(__dirname, "..", "downloads");
-
-    // Create 'downloads' directory if it doesn't exist
-    if (
-      !(await fsPromises
-        .access(downloadsDir, fsPromises.constants.F_OK)
-        .then(() => true)
-        .catch(() => false))
-    ) {
-      await fsPromises.mkdir(downloadsDir);
-    }
-
-    // Create a unique filename based on the current timestamp
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().replace(/:/g, "-");
-    const filename = `Expenses_${userId}_${formattedDate}.txt`;
-
-    // Define the file path
-    const filePath = path.join(downloadsDir, filename);
-
-    // Write the expenses to a file
-    await fsPromises.writeFile(filePath, stringifiedExpenses);
-
-    // Send the file as a response
-    res.download(filePath, filename, (err) => {
-      // Clean up: Delete the file after sending
-      fsPromises.unlink(filePath).catch((unlinkErr) => {
-        console.error("Error deleting file:", unlinkErr);
-      });
-
-      if (err) {
-        console.error("Error downloading file:", err);
-      }
+    let Expense = await Expense.findAll({ where: { userId: userId } });
+    const stringifiedExpenses = JSON.stringify(Expense);
+    const filename = `Expenses${userId}/${new Date()}.txt`;
+    const fileURL = await S3Services.uploadToS3(stringifiedExpenses, filename);
+    console.log("this is the fileUrl", fileURL);
+    const downloadfiles = await downloadedFiles.create({
+      link: fileURL,
+      userId: userId,
     });
-  } catch (e) {
-    console.error("Error:", e);
-    res.status(500).json({
-      message: "Something went wrong on the backend",
-      error: e.message || e,
-    });
+    res.status(200).json({ fileURL, success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "something went wrong", err: err });
   }
 };
 

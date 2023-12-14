@@ -2,7 +2,7 @@ const forgotemail = document.getElementById("forgotemail");
 const forgotemailbtn = document.getElementById("forgotemailbtn");
 const forgotPasswordForm = document.getElementById("forgotPasswordForm");
 const message = document.getElementById("message");
-const apiUrl = `http://localhost:3000`;
+const apiUrl = `http://13.127.249.108:3000`;
 
 forgotemailbtn.addEventListener("click", async () => {
   let foremail = forgotemail.value;
