@@ -6,7 +6,7 @@ const cors = require('cors');
 const path = require('path');
 const sequelize = require('./util/db');
 const morgan = require("morgan");
-const helmet = require('helmet');
+// const helmet = require('helmet');
 
 const verify = require('./middleware/verifyTokenHandler');
 
@@ -64,7 +64,7 @@ app.use('/expenses',verify.verify,expanseRouter);
 app.use('/api/premium',verify.verify,premiumRoute);
 
 
-    async function initiate() {
+async function initiate() {
         try {
             await sequelize.sync().then(console.log("DB Connected"))
             app.listen(port, () => {
