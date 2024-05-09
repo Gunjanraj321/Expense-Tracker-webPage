@@ -1,5 +1,5 @@
-const apiUrl = "http://13.127.249.108:3000";
-// const apiUrl = "http://localhost:3000";
+// const apiUrl = "http://13.127.249.108:3000";
+const apiUrl = "http://localhost:3000";
 const password = document.getElementById("password");
 const confirmPassword = document.getElementById("confirmPassword");
 const submitBtn = document.getElementById("submitBtn");

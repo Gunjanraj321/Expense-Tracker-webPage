@@ -1,5 +1,5 @@
-const apiUrl = "http://13.127.249.108:3000";
-// const apiUrl = "http://localhost:3000";
+// const apiUrl = "http://13.127.249.108:3000";
+const apiUrl = "http://localhost:3000";
 
 
 document.addEventListener("DOMContentLoaded" , function(){
